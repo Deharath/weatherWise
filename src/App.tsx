@@ -18,7 +18,7 @@ const Header = () => {
   const handleSearch = async () => {
     try {
       const encodedCity = encodeURIComponent(city);
-      const response = await axios.get(`/api/geocode?city=${encodedCity}`);
+      const response = await axios.get(`/.netlify/functions/geocode?city=${encodedCity}`);
       const locationData = response.data;
 
       if (locationData.results && locationData.results.length > 0) {
