@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './App.css';
 
-const App = () => {
+const App:React.FC = () => {
   return (
-    <Header />
+    <div className=' bg-slate-600 h-screen w-full'>
+      <Header />
+    </div>
   );
 };
 
@@ -20,6 +22,7 @@ const Header = () => {
       const encodedCity = encodeURIComponent(city);
       const response = await axios.get(`/.netlify/functions/geocode?city=${encodedCity}`);
       const locationData = response.data;
+      console.log(locationData)
 
       if (locationData.results && locationData.results.length > 0) {
         const lat = locationData.results[0].geometry.location.lat;
@@ -36,8 +39,8 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-white p-6 mb-8">
-      <h1 className="text-3xl font-bold mb-4">Weather App</h1>
+    <header className="p-6 mb-8 ">
+      <h1 className="text-3xl font-bold mb-4 text-slate-50">Weather App</h1>
       <div className="search-bar">
         <input
           type="text"
