@@ -39,88 +39,131 @@ const Header = () => {
   };
 
   return (
-    <header className="p-6 mb-8 ">
-      <h1 className="text-3xl font-bold mb-4 text-slate-800">Weather App</h1>
-      <div className="search-bar">
-        <input
-          type="text"
-          placeholder="Search by city"
-          value={city}
-          onChange={handleInputChange}
-          className="border-2 border-gray-300 rounded p-2 mr-2"
-        />
-        <button onClick={handleSearch} className="bg-blue-500 text-white px-4 py-2 rounded">Search</button>
-      </div>
-    </header>
+    <div className="flex flex-row w-4/6 p-3">
+      <input
+        type="text"
+        placeholder="Search by city"
+        value={city}
+        onChange={handleInputChange}
+        className="border-2 border-gray-300 rounded p-2 mr-2 w-4/5"
+      />
+      <button onClick={handleSearch} className="bg-blue-500 text-white px-4 py-2 rounded w-1/5">Search</button>
+    </div>
+
   );
 };
 
 const MainContainer = () => {
   return (
 
-    <div className="flex flex-col items-center min-h-screen bg-gray-100 ">
-      <Header />
-      <div className="flex flex-row space-y-4 md:space-y-0 md:space-x-4 bg-white p-4 rounded shadow-lg w-4/5">
-        <div className="flex flex-col space-y-4 w-4/5">
-          <div className="flex flex-col space-y-2">
-            <h1 className="font-bold text-2xl">City Name</h1>
-            <p>Chance of Rain: 30%</p>
-            Weather Icon
-            <p>Current Temperature: 20&deg;C</p>
-          </div>
-          <div className="flex flex-row space-x-2 justify-around">
-            <div className="flex flex-col items-center space-y-2 w-1/5">
-              <p>1 am</p>
-              Weather Icon
-              <p>Temperature</p>
-            </div>
-            <div className="flex flex-col items-center space-y-2 w-1/5">
-              <p>1 am</p>
-              Weather Icon
-              <p>Temperature</p>
-            </div>
-            <div className="flex flex-col items-center space-y-2 w-1/5">
-              <p>1 am</p>
-              Weather Icon
-              <p>Temperature</p>
-            </div>
-            <div className="flex flex-col items-center space-y-2 w-1/5">
-              <p>1 am</p>
-              Weather Icon
-              <p>Temperature</p>
-            </div>
-            <div className="flex flex-col items-center space-y-2 w-1/5">
-              <p>1 am</p>
-              Weather Icon
-              <p>Temperature</p>
-            </div>
-            <div className="flex flex-col items-center space-y-2 w-1/5">
-              <p>1 am</p>
-              Weather Icon
-              <p>Temperature</p>
-            </div>
-          </div>
-          <div className="flex flex-row space-x-4 justify-around">
-            <div>
-              <p>Feeling Temperature: 20&deg;C</p>
-            </div>
-            <div>
-              <p>Wind Speed: 10km/h</p>
-            </div>
-            <div>
-              <p>Chance of Rain: 30%</p>
-            </div>
-            <div>
-              <p>Pressure: 1013hPa</p>
-            </div>
-          </div>
+    <div className="flex flex-col items-center h-full justify-center">
+      <div className="flex flex-col bg-white p-4 rounded shadow-lg h-3/4 w-3/4">
+        <Header />
+        <div className='flex flex-row p-3 h-full'>
+          <div className="flex flex-col space-y-8 w-4/6">
 
-        </div>
-        <div className='flex-col h-full flex justify-center'>
-          <div className="flex flex-row items-center justify-around space-y-2 w-full">
-            <p>1 am</p>
-            Weather Icon
-            <p>Temperature</p>
+            <div className="flex flex-col space-y-2 h-1/3">
+              <h1 className="font-bold text-2xl ">City Name</h1>
+              <p>Chance of Rain: 30%</p>
+              Weather Icon
+              <p>Current Temperature: 20&deg;C</p>
+            </div>
+
+            <div className="flex flex-row justify-around items-center rounded-lg p-3 bg-teal-400 h-1/3">
+              Today's forecast
+              <div className="flex flex-col items-center space-y-2  p-2 w-1/5 text-center">
+                <p>1 am</p>
+                Weather Icon
+                <p>20&deg;C</p>
+              </div>
+              <div className="flex flex-col items-center space-y-2  p-2 w-1/5 border-l-2 text-center">
+                <p>1 am</p>
+                Weather Icon
+                <p>20&deg;C</p>
+              </div>
+              <div className="flex flex-col items-center space-y-2  p-2 w-1/5 border-l-2 text-center">
+                <p>1 am</p>
+                Weather Icon
+                <p>20&deg;C</p>
+              </div>
+              <div className="flex flex-col items-center space-y-2 p-2 w-1/5 border-l-2 text-center">
+                <p>1 am</p>
+                Weather Icon
+                <p>20&deg;C</p>
+              </div>
+              <div className="flex flex-col items-center space-y-2 p-2 w-1/5 border-l-2 text-center">
+                <p>1 am</p>
+                Weather Icon
+                <p>20&deg;C</p>
+              </div>
+              <div className="flex flex-col items-center space-y-2 p-2 w-1/5 border-l-2 text-center">
+                <p>1 am</p>
+                Weather Icon
+                <p>20&deg;C</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col space-x-4 justify-around items-center rounded-lg p-3 bg-teal-400 h-1/3">
+              <div className='flex flex-row w-full'>
+                <div className='w-1/2 flex'>
+                  <p>Feeling Temperature: 20&deg;C</p>
+                </div>
+                <div className='w-1/2 flex'>
+                  <p>Wind Speed: 10km/h</p>
+                </div>
+              </div>
+              <div className='flex flex-row w-full'>
+                <div className='w-1/2 flex'>
+                  <p>Chance of Rain: 30%</p>
+                </div>
+                <div className='w-1/2 flex'>
+                  <p>Pressure: 1013hPa</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div className='flex-col h-full flex justify-evenly w-2/6 ml-3'>
+            <div className="flex flex-row items-center justify-around w-full">
+              <p>Saturday</p>
+              Weather Icon
+              <p>Temperature</p>
+            </div>
+            <div className="flex flex-row items-center justify-around w-full">
+              <p>Saturday</p>
+              Weather Icon
+              <p>Temperature</p>
+            </div>
+            <div className="flex flex-row items-center justify-around w-full">
+              <p>Saturday</p>
+              Weather Icon
+              <p>Temperature</p>
+            </div>
+            <div className="flex flex-row items-center justify-around w-full">
+              <p>Saturday</p>
+              Weather Icon
+              <p>Temperature</p>
+            </div>
+            <div className="flex flex-row items-center justify-around w-full">
+              <p>Saturday</p>
+              Weather Icon
+              <p>Temperature</p>
+            </div>
+            <div className="flex flex-row items-center justify-around w-full">
+              <p>Saturday</p>
+              Weather Icon
+              <p>Temperature</p>
+            </div>
+            <div className="flex flex-row items-center justify-around w-full">
+              <p>Saturday</p>
+              Weather Icon
+              <p>Temperature</p>
+            </div>
+            <div className="flex flex-row items-center justify-around w-full">
+              <p>Saturday</p>
+              Weather Icon
+              <p>Temperature</p>
+            </div>
           </div>
         </div>
       </div>
