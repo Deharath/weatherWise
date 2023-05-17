@@ -69,8 +69,7 @@ const App: React.FC = () => {
       if (locationData.results && locationData.results.length > 0) {
         const lat = locationData.results[0].geometry.location.lat;
         const lng = locationData.results[0].geometry.location.lng;
-        const apiKey = '7fd140e69635817eca017b9c1c32eddc';
-        const weatherResponse = await axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&units=metric&appid=${apiKey}`)
+        const weatherResponse = await axios.get(`/.netlify/functions/weather?lat=${lat}&lon=${lng}`);
         setCity(locationData.results[0].formatted_address)
         setData(weatherResponse.data);
       } else {
