@@ -64,7 +64,7 @@ const App: React.FC = () => {
     if (!data) return null;
     return (
       <>
-        {data.hourly.slice(1, 7).map((hour) => (
+        {data.hourly.slice(1, 6).map((hour) => (
           <div key={hour.dt} className="flex flex-col items-center space-y-2 p-2 w-1/5 text-center border-r-2 border-gray-200 last:border-r-0">
             <p>{getDateTimeFromUnix(hour.dt, data.timezone_offset, 'hour')}</p>
             <img
@@ -84,14 +84,13 @@ const App: React.FC = () => {
     return (
       <>
         {data.daily.slice(1, 9).map((day) => (
-          <div key={day.dt} className="flex flex-row justify-around items-center w-full">
-            
+          <div key={day.dt} className="flex flex-row items-center justify-evenly">
             <p className='w-1/2'>{getDateTimeFromUnix(day.dt, data.timezone_offset, 'day')}</p>
-            <p className='w-1/4 font-semibold text-lg'>{`${day.temp.day.toFixed(0)}\u00B0C`}</p>
+            <p className='w-1/5 font-semibold text-lg'>{`${day.temp.day.toFixed(0)}\u00B0C`}</p>
             <img
               src={`http://openweathermap.org/img/wn/${day.weather[0].icon}.png`}
               alt={day.weather[0].description}
-              className='h-full w-1/4'
+              className='h-full w-1/5 object-none'
             />
           </div>
         ))}
@@ -101,9 +100,9 @@ const App: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center h-full justify-center bg-gradient-to-tr from-blue-900 via-blue-600 to-blue-400 font-sans p-5">
-      <div className="flex flex-col bg-gray-800 p-4 rounded shadow-lg md:h-3/4 md:w-3/4 w-full h-full opacity-95">
+      <div className="flex flex-col bg-gray-800 p-4 rounded shadow-lg md:h-3/4 md:w-11/12 w-full h-full bg-opacity-80 ">
         <div className='flex flex-row p-3 h-full text-white'>
-          <div className="flex flex-col space-y-3 w-4/6">
+          <div className="flex flex-col space-y-3 md:w-4/6 w-full">
 
             <div className="flex flex-row w-full text-black">
               <input
@@ -111,12 +110,12 @@ const App: React.FC = () => {
                 placeholder="Search by city"
                 value={input}
                 onChange={handleInputChange}
-                className="border-2 border-gray-300 rounded p-2 mr-2 w-4/5"
+                className="border-2 border-gray-300 rounded p-2 mr-2 md:w-4/5 w-4/6"
               />
-              <button onClick={handleSearch} className="bg-blue-500 text-white px-4 py-2 rounded w-1/5">Search</button>
+              <button onClick={handleSearch} className="bg-blue-500 text-white px-4 py-2 rounded w-2/6 md:w-1/5">Search</button>
             </div>
 
-            <div className="flex flex-row space-y-2 h-1/3 p-3 justify-between">
+            <div className="flex flex-row space-y-2 h-1/3 p-3 justify-between ">
               <div className='flex flex-col'>
                 <h1 className="font-bold text-2xl mb-3">{city}</h1>
                 <p>Humidity: {data?.current.humidity}%</p>
@@ -129,14 +128,14 @@ const App: React.FC = () => {
               />
             </div>
 
-            <div className="flex flex-col rounded-lg p-3 bg-gray-600 h-1/3">
+            <div className="flex flex-col rounded-lg p-3 bg-gray-600 bg-opacity-80 h-1/3 justify-evenly">
               <h2 className='mb-2 font-semibold'>Today's forecast</h2>
               <div className='flex flex-row justify-around items-center'>
                 <HourlyForecast data={data} />
               </div>
             </div>
 
-            <div className="flex flex-col space-x-4 justify-around items-center rounded-lg p-3 bg-gray-600 h-1/3">
+            <div className="flex flex-col space-x-4 justify-around items-center rounded-lg p-3 bg-gray-600 h-1/3 bg-opacity-80">
               <div className='self-start flex'><h2 className='mb-2 font-semibold'>Air Conditions</h2></div>
               <div className='flex flex-row w-full'>
                 <div className='w-1/2 flex flex-col'>
@@ -161,11 +160,9 @@ const App: React.FC = () => {
             </div>
 
           </div>
-          <div className='flex-col h-full flex  w-2/6 ml-3 rounded-lg p-3 bg-gray-600'>
+          <div className='flex-col md:flex w-2/6 ml-3 rounded-lg p-3 bg-gray-600 justify-evenly hidden bg-opacity-80'>
             <h2 className='font-semibold'>7 Day Forecast</h2>
-            <div className='flex flex-col space-y-2 justify-evenly h-full'>
-              <DailyForecast data={data} />
-            </div>
+            <DailyForecast data={data} />
           </div>
         </div>
       </div>
