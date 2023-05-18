@@ -5,7 +5,6 @@ import { WeatherData } from './additional/weatherData.interface';
 
 const App: React.FC = () => {
 
-
   const [input, setInput] = useState('');
   const [city, setCity] = useState('');
   const [data, setData] = useState<WeatherData | null>(null);
@@ -26,7 +25,7 @@ const App: React.FC = () => {
         const weatherResponse = await axios.get(`/.netlify/functions/weather?lat=${lat}&lon=${lng}`);
         setCity(locationData.results[0].formatted_address)
         setData(weatherResponse.data);
-        console.log(weatherResponse.data.hourly[1])
+        console.log(weatherResponse.data)
 
       } else {
         console.log('No results found');
@@ -36,21 +35,77 @@ const App: React.FC = () => {
     }
   };
 
-  function hourlyForecast() {
-    const hourlyData = [];
-    for (let i = 1; i < 7; i++) {
-      hourlyData.push(data?.hourly[i])
+  type DateTimeFormat = "hour" | "day";
+
+  function getDateTimeFromUnix(unix: number, offset: number, format: DateTimeFormat) {
+    // convert unix timestamp and offset from seconds to milliseconds
+    const unixMilliseconds = unix * 1000;
+    const offsetMilliseconds = offset * 1000;
+
+    // create a Date object using the adjusted timestamp
+    const date = new Date(unixMilliseconds + offsetMilliseconds);
+
+    // convert the date to a string in the UTC timezone
+    const utcString = date.toISOString();
+
+    // parse the UTC string back into a Date object
+    const adjustedDate = new Date(utcString);
+
+    // format the adjusted Date object
+    if (format === "hour") {
+      return new Intl.DateTimeFormat("default", { hour: "2-digit", minute: "2-digit", timeZone: 'UTC' }).format(adjustedDate);
+    } else if (format === "day") {
+      return new Intl.DateTimeFormat("default", { weekday: "long", timeZone: 'UTC' }).format(adjustedDate);
     }
   }
 
 
+  const HourlyForecast: React.FC<{ data: WeatherData | null }> = ({ data }) => {
+    if (!data) return null;
+    return (
+      <>
+        {data.hourly.slice(1, 7).map((hour) => (
+          <div key={hour.dt} className="flex flex-col items-center space-y-2 p-2 w-1/5 text-center border-r-2 border-gray-200 last:border-r-0">
+            <p>{getDateTimeFromUnix(hour.dt, data.timezone_offset, 'hour')}</p>
+            <img
+              src={`http://openweathermap.org/img/wn/${hour.weather[0].icon}.png`}
+              alt={hour.weather[0].description}
+              className='h-1/2'
+            />
+            <p>{`${hour.temp.toFixed(0)}\u00B0C`}</p>
+          </div>
+        ))}
+      </>
+    );
+  };
+
+  const DailyForecast: React.FC<{ data: WeatherData | null }> = ({ data }) => {
+    if (!data) return null;
+    return (
+      <>
+        {data.daily.slice(1, 9).map((day) => (
+          <div key={day.dt} className="flex flex-row justify-around items-center w-full">
+            
+            <p className='w-1/2'>{getDateTimeFromUnix(day.dt, data.timezone_offset, 'day')}</p>
+            <p className='w-1/4 font-semibold text-lg'>{`${day.temp.day.toFixed(0)}\u00B0C`}</p>
+            <img
+              src={`http://openweathermap.org/img/wn/${day.weather[0].icon}.png`}
+              alt={day.weather[0].description}
+              className='h-full w-1/4'
+            />
+          </div>
+        ))}
+      </>
+    );
+  };
+
   return (
-    <div className="flex flex-col items-center h-full justify-center bg-gradient-to-tr from-blue-900 via-blue-600 to-blue-400 font-sans">
-      <div className="flex flex-col bg-gray-800 p-4 rounded shadow-lg h-3/4 w-3/4 opacity-95">
+    <div className="flex flex-col items-center h-full justify-center bg-gradient-to-tr from-blue-900 via-blue-600 to-blue-400 font-sans p-5">
+      <div className="flex flex-col bg-gray-800 p-4 rounded shadow-lg md:h-3/4 md:w-3/4 w-full h-full opacity-95">
         <div className='flex flex-row p-3 h-full text-white'>
           <div className="flex flex-col space-y-3 w-4/6">
 
-            <div className="flex flex-row w-4/6 p-3 text-black">
+            <div className="flex flex-row w-full text-black">
               <input
                 type="text"
                 placeholder="Search by city"
@@ -77,36 +132,7 @@ const App: React.FC = () => {
             <div className="flex flex-col rounded-lg p-3 bg-gray-600 h-1/3">
               <h2 className='mb-2 font-semibold'>Today's forecast</h2>
               <div className='flex flex-row justify-around items-center'>
-                <div className="flex flex-col items-center space-y-2  p-2 w-1/5 text-center">
-                  <p>1 am</p>
-                  Weather Icon
-                  <p>20&deg;C</p>
-                </div>
-                <div className="flex flex-col items-center space-y-2  p-2 w-1/5 border-l-2 text-center">
-                  <p>1 am</p>
-                  Weather Icon
-                  <p>20&deg;C</p>
-                </div>
-                <div className="flex flex-col items-center space-y-2  p-2 w-1/5 border-l-2 text-center">
-                  <p>1 am</p>
-                  Weather Icon
-                  <p>20&deg;C</p>
-                </div>
-                <div className="flex flex-col items-center space-y-2 p-2 w-1/5 border-l-2 text-center">
-                  <p>1 am</p>
-                  Weather Icon
-                  <p>20&deg;C</p>
-                </div>
-                <div className="flex flex-col items-center space-y-2 p-2 w-1/5 border-l-2 text-center">
-                  <p>1 am</p>
-                  Weather Icon
-                  <p>20&deg;C</p>
-                </div>
-                <div className="flex flex-col items-center space-y-2 p-2 w-1/5 border-l-2 text-center">
-                  <p>1 am</p>
-                  Weather Icon
-                  <p>20&deg;C</p>
-                </div>
+                <HourlyForecast data={data} />
               </div>
             </div>
 
@@ -137,47 +163,8 @@ const App: React.FC = () => {
           </div>
           <div className='flex-col h-full flex  w-2/6 ml-3 rounded-lg p-3 bg-gray-600'>
             <h2 className='font-semibold'>7 Day Forecast</h2>
-            <div className='flex flex-col space-y-2 justify-around h-full'>
-              <div className="flex flex-row items-center justify-around w-full">
-                <p>Saturday</p>
-                Weather Icon
-                <p>Temperature</p>
-              </div>
-              <div className="flex flex-row items-center justify-around w-full">
-                <p>Saturday</p>
-                Weather Icon
-                <p>Temperature</p>
-              </div>
-              <div className="flex flex-row items-center justify-around w-full">
-                <p>Saturday</p>
-                Weather Icon
-                <p>Temperature</p>
-              </div>
-              <div className="flex flex-row items-center justify-around w-full">
-                <p>Saturday</p>
-                Weather Icon
-                <p>Temperature</p>
-              </div>
-              <div className="flex flex-row items-center justify-around w-full">
-                <p>Saturday</p>
-                Weather Icon
-                <p>Temperature</p>
-              </div>
-              <div className="flex flex-row items-center justify-around w-full">
-                <p>Saturday</p>
-                Weather Icon
-                <p>Temperature</p>
-              </div>
-              <div className="flex flex-row items-center justify-around w-full">
-                <p>Saturday</p>
-                Weather Icon
-                <p>Temperature</p>
-              </div>
-              <div className="flex flex-row items-center justify-around w-full">
-                <p>Saturday</p>
-                Weather Icon
-                <p>Temperature</p>
-              </div>
+            <div className='flex flex-col space-y-2 justify-evenly h-full'>
+              <DailyForecast data={data} />
             </div>
           </div>
         </div>
