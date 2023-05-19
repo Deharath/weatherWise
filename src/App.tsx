@@ -33,7 +33,10 @@ const App: React.FC = () => {
     } catch (error) {
       console.error(error);
     } finally {
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+        setInput('');
+      }, 1000);
     }
   };
 
@@ -102,29 +105,34 @@ const App: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center h-full justify-center bg-gradient-to-tr from-blue-900 via-blue-600 to-blue-400 font-sans p-5 overflow-hidden">
-      <div className={`flex flex-col bg-gray-800 rounded shadow-lg bg-opacity-80 overflow-hidden ${data != null ? "w-full" : "w-1/2"} max-w-4xl`}>
+      <div className={`flex flex-col bg-gray-800 rounded shadow-lg bg-opacity-80 overflow-hidden ${data != null ? "w-full" : "md:w-1/2"} max-w-4xl`}>
         <div className='flex md:flex-row flex-col h-full text-white'>
           <div className="flex flex-col space-y-3 w-full h-full p-1 pb-3">
-
             <div className="flex flex-row w-full text-black p-3">
-              <input
-                type="text"
-                placeholder="Search by city"
-                value={input}
-                onChange={handleInputChange}
-                className="border-2 border-gray-300 rounded p-2 mr-2 w-4/5"
-              />
-              <button onClick={handleSearch} className="bg-blue-500 text-white px-4 py-2 rounded w-1/5 flex justify-center items-center">
+              <div className="relative w-full">
+                <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+                  <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z">
+                    </path>
+                  </svg>
+                </div>
+                <input
+                  type="search"
+                  value={input}
+                  onChange={handleInputChange}
+                  className="block p-4 pl-10 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Enter city name" />
+                <button onClick={handleSearch} className="flex justify-center items-center w-3/12 md:w-1/5 text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                 {!loading ?
-                  (<span className="material-symbols-outlined">search</span>)
+                  ('Search')
                   :
                   (
-                    <svg aria-hidden="true" className=" h-6 w-6 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg aria-hidden="true" className="h-5 w-5 text-gray-200 animate-spin fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
                       <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill" />
                     </svg>
                   )}
-              </button>
+                  </button>
+              </div>
             </div>
 
             {data != null &&
@@ -141,7 +149,7 @@ const App: React.FC = () => {
                     className='object-scale-down'
                   />
                 </div>
-                <div className="flex-1 flex-col space-y-3 w-full overflow-auto h-1/2 p-3">
+                <div className="flex-1 flex-col space-y-3 w-full overflow-auto h-1/2 px-3">
                   <div className="flex flex-col rounded-lg p-3 bg-gray-600 bg-opacity-80 justify-evenly w-full">
                     <h2 className='mb-2 font-semibold'>Today's forecast</h2>
                     <div className='flex flex-row items-center h-full overflow-x-auto w-full'>
@@ -152,23 +160,43 @@ const App: React.FC = () => {
                   <div className="flex flex-col justify-around items-center rounded-lg p-3 bg-gray-600 bg-opacity-80 " >
                     <div className='self-start flex'><h2 className='font-semibold'>Air Conditions</h2></div>
                     <div className='flex flex-row w-full'>
-                      <div className='w-1/2 flex flex-col'>
-                        <p>Feels like</p>
-                        <p className=' font-semibold text-xl'>{`${data?.current.feels_like.toFixed(0)}\u00B0C`}</p>
+                      <div className='w-1/2 flex flex-row'>
+                        <span className="material-symbols-outlined">
+                          thermostat
+                        </span>
+                        <div className='flex flex-col'>
+                          <p>Feels like</p>
+                          <p className=' font-semibold text-xl'>{`${data?.current.feels_like.toFixed(0)}\u00B0C`}</p>
+                        </div>
                       </div>
-                      <div className='w-1/2 flex flex-col'>
-                        <p>Wind Speed</p>
-                        <p className=' font-semibold text-xl'>{`${data?.current.wind_speed.toFixed(1)} km/h`}</p>
+                      <div className='w-1/2 flex flex-row'>
+                        <span className="material-symbols-outlined">
+                          air
+                        </span>
+                        <div className='flex flex-col'>
+                          <p>Wind Speed</p>
+                          <p className=' font-semibold text-xl'>{`${data?.current.wind_speed.toFixed(1)} km/h`}</p>
+                        </div>
                       </div>
                     </div>
                     <div className='flex flex-row w-full'>
-                      <div className='w-1/2 flex flex-col'>
-                        <p>Chance of Rain</p>
-                        <p className=' font-semibold text-xl'>{`${data?.hourly[0].pop * 100}%`}</p>
+                      <div className='w-1/2 flex flex-row'>
+                        <span className="material-symbols-outlined">
+                          rainy
+                        </span>
+                        <div className='flex flex-col'>
+                          <p>Chance of Rain</p>
+                          <p className=' font-semibold text-xl'>{`${data?.hourly[0].pop * 100}%`}</p>
+                        </div>
                       </div>
-                      <div className='w-1/2 flex flex-col'>
-                        <p>Pressure</p>
-                        <p className=' font-semibold text-xl'>{`${data?.current.pressure}hPa`}</p>
+                      <div className='w-1/2 flex flex-row'>
+                        <span className="material-symbols-outlined">
+                          compress
+                        </span>
+                        <div className='flex flex-col'>
+                          <p>Pressure</p>
+                          <p className=' font-semibold text-xl'>{`${data?.current.pressure}hPa`}</p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -179,13 +207,9 @@ const App: React.FC = () => {
                 </div>
               </>
             }
-
-
-
-
           </div>
           {data != null &&
-            <div className='flex-col md:flex w-1/2 rounded-lg p-3 ml-0 bg-gray-600 justify-evenly hidden bg-opacity-80 m-3'>
+            <div className='flex-col md:flex w-1/2 rounded-lg p-3 ml-0 bg-gray-600 justify-between hidden bg-opacity-80 m-3'>
               <h2 className='font-semibold'>7 Day Forecast</h2>
               <DailyForecast data={data} />
             </div>
@@ -196,6 +220,4 @@ const App: React.FC = () => {
   );
 };
 
-
 export default App;
-

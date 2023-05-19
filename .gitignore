@@ -27,6 +27,3 @@ yarn-error.log*
 
 # local environment variables
 .env
-
-# local functions folder
-netlify/functions/geocode_local.js
