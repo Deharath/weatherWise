@@ -1,42 +1,47 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import './App.css';
-import { WeatherData } from './additional/weatherData.interface';
+import React, { useState } from "react";
+import axios from "axios";
+import "./App.css";
+import { WeatherData } from "./additional/weatherData.interface";
 
 const App: React.FC = () => {
 
-  const [input, setInput] = useState('');
-  const [city, setCity] = useState('');
+  const [input, setInput] = useState("");
+  const [city, setCity] = useState("");
   const [data, setData] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value);
   };
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleSearch();
+    }
+  };
 
   const handleSearch = async () => {
     try {
-      setLoading(true);
       const encodedInput = encodeURIComponent(input);
       const geocodeResponse = await axios.get(`/.netlify/functions/geocode?city=${encodedInput}`);
       const locationData = geocodeResponse.data;
 
       if (locationData.results && locationData.results.length > 0) {
+        setLoading(true);
         const lat = locationData.results[0].geometry.location.lat;
         const lng = locationData.results[0].geometry.location.lng;
         const weatherResponse = await axios.get(`/.netlify/functions/weather?lat=${lat}&lon=${lng}`);
         setCity(locationData.results[0].formatted_address)
         setData(weatherResponse.data);
+        setLoading(false);
       } else {
-        console.log('No results found');
+        console.log("No results found");
+        setInput("No results found");
+        setTimeout(() => {
+          setInput("");
+        }, 5000);
       }
     } catch (error) {
       console.error(error);
-    } finally {
-      setTimeout(() => {
-        setLoading(false);
-        setInput('');
-      }, 1000);
     }
   };
 
@@ -58,9 +63,9 @@ const App: React.FC = () => {
 
     // format the adjusted Date object
     if (format === "hour") {
-      return new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: 'UTC' }).format(adjustedDate);
+      return new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "UTC" }).format(adjustedDate);
     } else if (format === "day") {
-      return new Intl.DateTimeFormat("en-GB", { weekday: "short", timeZone: 'UTC' }).format(adjustedDate);
+      return new Intl.DateTimeFormat("en-GB", { weekday: "short", timeZone: "UTC" }).format(adjustedDate);
     }
   }
 
@@ -71,11 +76,11 @@ const App: React.FC = () => {
       <>
         {data.hourly.slice(1, 6).map((hour) => (
           <div key={hour.dt} className="flex flex-col items-center space-y-2 p-2 w-1/5 text-center border-r-2 border-gray-200 last:border-r-0 mb-3">
-            <p>{getDateTimeFromUnix(hour.dt, data.timezone_offset, 'hour')}</p>
+            <p>{getDateTimeFromUnix(hour.dt, data.timezone_offset, "hour")}</p>
             <img
               src={`http://openweathermap.org/img/wn/${hour.weather[0].icon}.png`}
               alt={hour.weather[0].description}
-              className='h-1/2'
+              className="h-1/2"
             />
             <p>{`${hour.temp.toFixed(0)}\u00B0C`}</p>
           </div>
@@ -90,12 +95,12 @@ const App: React.FC = () => {
       <>
         {data.daily.slice(1, 9).map((day) => (
           <div key={day.dt} className="flex flex-row items-center justify-evenly">
-            <p className='w-1/2 self-center'>{getDateTimeFromUnix(day.dt, data.timezone_offset, 'day')}</p>
-            <p className='w-1/5 font-semibold text-lg'>{`${day.temp.day.toFixed(0)}\u00B0C`}</p>
+            <p className="w-1/2 self-center">{getDateTimeFromUnix(day.dt, data.timezone_offset, "day")}</p>
+            <p className="w-1/5 font-semibold text-lg">{`${day.temp.day.toFixed(0)}\u00B0C`}</p>
             <img
               src={`http://openweathermap.org/img/wn/${day.weather[0].icon}.png`}
               alt={day.weather[0].description}
-              className='object-scale-down'
+              className="object-scale-down"
             />
           </div>
         ))}
@@ -105,10 +110,10 @@ const App: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center h-full justify-center bg-gradient-to-tr from-blue-900 via-blue-600 to-blue-400 font-sans p-5 overflow-hidden">
-      <div className={`flex flex-col bg-gray-800 rounded shadow-lg bg-opacity-80 overflow-hidden ${data != null ? "w-full" : "md:w-1/2"} max-w-4xl`}>
-        <div className='flex md:flex-row flex-col h-full text-white'>
-          <div className="flex flex-col space-y-3 w-full h-full p-1 pb-3">
-            <div className="flex flex-row w-full text-black p-3">
+      <div className={`flex flex-col bg-gray-800 rounded shadow-lg bg-opacity-80 overflow-hidden ${data != null && "md:w-1/2"} w-full max-w-4xl md:p-5 p-4 shadow shadow-gray-300`}>
+        <div className="flex md:flex-row flex-col h-full text-white ">
+          <div className={`flex flex-col space-y-3 w-full h-full ${data != null && "md:mr-3"}`}>
+            <div className="flex flex-row w-full text-black">
               <div className="relative w-full">
                 <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                   <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -120,10 +125,11 @@ const App: React.FC = () => {
                   type="search"
                   value={input}
                   onChange={handleInputChange}
+                  onKeyDown={handleKeyDown}
                   className="block p-4 pl-10 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Enter city name" />
                 <button onClick={handleSearch} className="flex justify-center items-center w-3/12 md:w-1/5 text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                 {!loading ?
-                  ('Search')
+                  ("Search")
                   :
                   (
                     <svg aria-hidden="true" className="h-5 w-5 text-gray-200 animate-spin fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -137,8 +143,8 @@ const App: React.FC = () => {
 
             {data != null &&
               <>
-                <div className="flex flex-row space-y-2 p-3 justify-between ">
-                  <div className='flex flex-col'>
+                <div className="flex flex-row p-3 justify-between ">
+                  <div className="flex flex-col">
                     <h1 className="font-bold text-2xl mb-3">{city}</h1>
                     <p>Humidity: {data?.current.humidity}%</p>
                     <p>Current Temperature: {`${data?.current && data.current.temp.toFixed(0)}\u00B0C`} </p>
@@ -146,62 +152,62 @@ const App: React.FC = () => {
                   <img
                     src={`http://openweathermap.org/img/wn/${data?.current.weather[0].icon}.png`}
                     alt={data?.current.weather[0].description}
-                    className='object-scale-down'
+                    className="  object-cover"
                   />
                 </div>
-                <div className="flex-1 flex-col space-y-3 w-full overflow-auto h-1/2 px-3">
+                <div className="flex-1 flex-col space-y-3 w-full overflow-auto h-1/2">
                   <div className="flex flex-col rounded-lg p-3 bg-gray-600 bg-opacity-80 justify-evenly w-full">
-                    <h2 className='mb-2 font-semibold'>Today's forecast</h2>
-                    <div className='flex flex-row items-center h-full overflow-x-auto w-full'>
+                    <h2 className="mb-2 font-semibold">Today"s forecast</h2>
+                    <div className="flex flex-row items-center h-full overflow-x-auto w-full">
                       <HourlyForecast data={data} />
                     </div>
                   </div>
 
                   <div className="flex flex-col justify-around items-center rounded-lg p-3 bg-gray-600 bg-opacity-80 " >
-                    <div className='self-start flex'><h2 className='font-semibold'>Air Conditions</h2></div>
-                    <div className='flex flex-row w-full'>
-                      <div className='w-1/2 flex flex-row'>
+                    <div className="self-start flex"><h2 className="font-semibold">Air Conditions</h2></div>
+                    <div className="flex flex-row w-full">
+                      <div className="w-1/2 flex flex-row">
                         <span className="material-symbols-outlined">
                           thermostat
                         </span>
-                        <div className='flex flex-col'>
+                        <div className="flex flex-col">
                           <p>Feels like</p>
-                          <p className=' font-semibold text-xl'>{`${data?.current.feels_like.toFixed(0)}\u00B0C`}</p>
+                          <p className=" font-semibold text-xl">{`${data?.current.feels_like.toFixed(0)}\u00B0C`}</p>
                         </div>
                       </div>
-                      <div className='w-1/2 flex flex-row'>
+                      <div className="w-1/2 flex flex-row">
                         <span className="material-symbols-outlined">
                           air
                         </span>
-                        <div className='flex flex-col'>
+                        <div className="flex flex-col">
                           <p>Wind Speed</p>
-                          <p className=' font-semibold text-xl'>{`${data?.current.wind_speed.toFixed(1)} km/h`}</p>
+                          <p className=" font-semibold text-xl">{`${data?.current.wind_speed.toFixed(1)} km/h`}</p>
                         </div>
                       </div>
                     </div>
-                    <div className='flex flex-row w-full'>
-                      <div className='w-1/2 flex flex-row'>
+                    <div className="flex flex-row w-full">
+                      <div className="w-1/2 flex flex-row">
                         <span className="material-symbols-outlined">
                           rainy
                         </span>
-                        <div className='flex flex-col'>
+                        <div className="flex flex-col">
                           <p>Chance of Rain</p>
-                          <p className=' font-semibold text-xl'>{`${data?.hourly[0].pop * 100}%`}</p>
+                          <p className=" font-semibold text-xl">{`${data?.hourly[0].pop * 100}%`}</p>
                         </div>
                       </div>
-                      <div className='w-1/2 flex flex-row'>
+                      <div className="w-1/2 flex flex-row">
                         <span className="material-symbols-outlined">
                           compress
                         </span>
-                        <div className='flex flex-col'>
+                        <div className="flex flex-col">
                           <p>Pressure</p>
-                          <p className=' font-semibold text-xl'>{`${data?.current.pressure}hPa`}</p>
+                          <p className=" font-semibold text-xl">{`${data?.current.pressure}hPa`}</p>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className='flex-col flex-1 w-full rounded-lg p-3 bg-gray-600 justify-evenly md:hidden bg-opacity-80'>
-                    <div className='font-semibold'>7 Day Forecast</div>
+                  <div className="flex-col flex-1 w-full rounded-lg p-3 bg-gray-600 justify-evenly md:hidden bg-opacity-80">
+                    <div className="font-semibold">7 Day Forecast</div>
                     <DailyForecast data={data} />
                   </div>
                 </div>
@@ -209,8 +215,8 @@ const App: React.FC = () => {
             }
           </div>
           {data != null &&
-            <div className='flex-col md:flex w-1/2 rounded-lg p-3 ml-0 bg-gray-600 justify-between hidden bg-opacity-80 m-3'>
-              <h2 className='font-semibold'>7 Day Forecast</h2>
+            <div className="flex-col md:flex w-1/2 rounded-lg bg-gray-600 justify-between hidden bg-opacity-80 p-3">
+              <h2 className="font-semibold">7 Day Forecast</h2>
               <DailyForecast data={data} />
             </div>
           }
